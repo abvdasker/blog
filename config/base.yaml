@@ -2,3 +2,15 @@ server:
   hostport: 127.0.0.1:8080
   scheme: http
   timeout: 10s
+
+logger:
+  level: info
+  encoding: console
+  outputPaths:
+    - stdout
+  encoderConfig:
+    messageKey: "msg"
+    levelKey: "level"
+    levelEncoder: "coloredCapital"
+    timeKey: "time"
+    timeEncoder: "iso8601"
