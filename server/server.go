@@ -35,11 +35,11 @@ func New(
 
 func (s *server) Start() error {
 	staticFilesDir := http.Dir("static")
-	http.Handle("/static", http.StripPrefix("/static/", http.FileServer(staticFilesDir)))
+	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(staticFilesDir)))
+	http.Handle("/api/", s.apiHandler)
 	http.HandleFunc("/", func(responseWriter http.ResponseWriter, request *http.Request) {
 		http.ServeFile(responseWriter, request, "static/html/index.html")
 	})
-	http.Handle("/api", s.apiHandler)
 	return s.base.ListenAndServe()
 }
 

@@ -1,0 +1,43 @@
+body {
+    font-family: sans-serif;
+    margin: 0;
+}
+
+.left-shoulder {
+    position: fixed;
+    left: 0;
+    width: 30%;
+    display: block;
+    height: 100%;
+    border-right: 2px solid black;
+}
+
+.right-content {
+    position: absolute;
+    left: 30%;
+    right: 0;
+    display: block;
+}
+
+.site-title {
+    font-weight: normal;
+}
+
+.centered {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    text-align: center;
+}
+
+.v-pad-md {
+    padding: 2em 0;
+}
+
+.core-nav a {
+    display: block;
+}
+
+.text-large {
+    font-size: 23px;
+}
