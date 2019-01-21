@@ -8,9 +8,11 @@ logger:
   encoding: console
   outputPaths:
     - stdout
+  errorOutputPaths:
+    - stderr
   encoderConfig:
     messageKey: "msg"
     levelKey: "level"
-    levelEncoder: "coloredCapital"
+    levelEncoder: "capitalColor"
     timeKey: "time"
     timeEncoder: "iso8601"
