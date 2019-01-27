@@ -2,6 +2,12 @@
 
 
 [[projects]]
+  name = "github.com/julienschmidt/httprouter"
+  packages = ["."]
+  revision = "348b672cd90d8190f8240323e372ecd1e66b59dc"
+  version = "v1.2.0"
+
+[[projects]]
   name = "go.uber.org/atomic"
   packages = ["."]
   revision = "1ea20fb1cbb1cc08cbd0d913a96dead89aa18289"
@@ -40,6 +46,6 @@
 [solve-meta]
   analyzer-name = "dep"
   analyzer-version = 1
-  inputs-digest = "4f0b58901a042122e28a77a8f8a7fa75ce6ac0ab3801e2f98c868e325a834513"
+  inputs-digest = "73721cd438e85500df65d1d86cce15732048119fe909b18d0f104bfdddeb3378"
   solver-name = "gps-cdcl"
   solver-version = 1

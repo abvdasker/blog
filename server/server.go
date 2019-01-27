@@ -4,7 +4,8 @@ import (
 	"net/http"
 
 	"github.com/abvdasker/blog/config"
-	"github.com/abvdasker/blog/server/handler"
+	"github.com/abvdasker/blog/handler"
+	"github.com/julienschmidt/httprouter"
 )
 
 type Server interface {
@@ -12,34 +13,22 @@ type Server interface {
 }
 
 type server struct {
-	cfg        *config.Config
-	base       *http.Server
-	apiHandler handler.APIHandler
+	cfg  *config.Config
+	base *http.Server
 }
 
-func New(
-	cfg *config.Config,
-	apiHandler handler.APIHandler,
-	middlewareHandler handler.MiddlewareHandler,
-) Server {
+func New(cfg *config.Config, router *httprouter.Router, middleware handler.Middleware) Server {
 	return &server{
 		cfg: cfg,
 		base: &http.Server{
 			Addr:        cfg.Server.Hostport,
 			ReadTimeout: cfg.Server.Timeout,
-			Handler: middlewareHandler,
+			Handler:     middleware.Wrap(router),
 		},
-		apiHandler: apiHandler,
 	}
 }
 
 func (s *server) Start() error {
-	staticFilesDir := http.Dir("static")
-	http.Handle("/static/", http.StripPrefix("/static/", http.FileServer(staticFilesDir)))
-	http.Handle("/api/", s.apiHandler)
-	http.HandleFunc("/", func(responseWriter http.ResponseWriter, request *http.Request) {
-		http.ServeFile(responseWriter, request, "static/html/index.html")
-	})
 	return s.base.ListenAndServe()
 }
 

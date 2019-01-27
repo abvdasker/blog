@@ -4,17 +4,20 @@ import (
 	"go.uber.org/fx"
 
 	"github.com/abvdasker/blog/config"
-	"github.com/abvdasker/blog/server"
-	"github.com/abvdasker/blog/server/handler"
+	"github.com/abvdasker/blog/handler"
+	"github.com/abvdasker/blog/handler/api"
 	"github.com/abvdasker/blog/lib"
+	"github.com/abvdasker/blog/server"
 )
 
 func main() {
 	app := fx.New(
+		handler.Module,
+		api.Module,
+
 		fx.Provide(
 			config.Load,
-			handler.NewAPIHandler,
-			handler.NewMiddlewareHandler,
+			server.NewRouter,
 			server.New,
 			lib.NewLogger,
 		),

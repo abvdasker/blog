@@ -1,11 +1,11 @@
 package config
 
 import (
-	"time"
 	"io/ioutil"
+	"time"
 
-	"gopkg.in/yaml.v2"
 	"go.uber.org/zap"
+	"gopkg.in/yaml.v2"
 )
 
 const (
@@ -14,7 +14,7 @@ const (
 
 type Config struct {
 	Server ServerConfig `yaml:"server"`
-	Logger zap.Config `yaml:"logger"`
+	Logger zap.Config   `yaml:"logger"`
 }
 
 type ServerConfig struct {
