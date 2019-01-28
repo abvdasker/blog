@@ -6,7 +6,7 @@ body {
 .left-shoulder {
     position: fixed;
     left: 0;
-    width: 30%;
+    width: 25%;
     display: block;
     height: 100%;
     border-right: 2px solid black;
@@ -14,12 +14,12 @@ body {
 
 .right-content {
     position: absolute;
-    left: 30%;
+    width: 75%;
     right: 0;
     display: block;
 }
 
-.site-title {
+h1 {
     font-weight: normal;
 }
 
@@ -34,10 +34,34 @@ body {
     padding: 2em 0;
 }
 
+.left-pad-md {
+    padding-left: 2em;
+}
+
 .core-nav a {
     display: block;
 }
 
 .text-large {
     font-size: 23px;
+}
+
+.article {
+    border-bottom: 1px
+}
+
+.article hr {
+    display: inline-block;
+    width: 95%;
+    margin-left: 2.5%;
+    margin-right: 2.5%;
+}
+
+.hidden {
+    display: none;
+}
+
+.right {
+    display: inline-block;
+    float: right;
 }

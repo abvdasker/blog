@@ -11,6 +11,5 @@ func NewLogger(cfg *config.Config) (*zap.SugaredLogger, error) {
 	if err != nil {
 		return nil, err
 	}
-	logger.Sugar().With(zap.String("test", "hello world")).Info("TEST MESSAGE")
 	return logger.Sugar(), nil
 }
