@@ -3,7 +3,13 @@ package dal
 import (
 	"context"
 
+	"database/sql"
+
 	"github.com/abvdasker/blog/client/db"
+)
+
+const (
+	readByDateQuery = `SELECT * FROM articles WHERE CREATED_AT > ? AND CREATED_AT < ? LIMIT ? OFFSET ?`
 )
 
 type Articles interface {
@@ -15,12 +21,16 @@ type Articles interface {
 }
 
 type articles struct {
-	database db.Client
+	readByDate *db.
 }
 
-func NewArticles(database db.Client) Articles {
+func NewArticles(database *sql.DB) Articles {
+	readByDate := database.Prepare(
+		readByDateQuery,
+	)
+
 	return &articles{
-		database: database,
+		readByDate: readByDate,
 	}
 }
 
@@ -32,5 +42,12 @@ func (a *articles) ReadByDate(
 	if !start.Before(end) {
 		return nil, erorrs.New("start time must be earlier than end time")
 	}
+
+	rows, err := a.readByDate.QueryContext(ctx, start, end, limit, offset)
+	defer rows.Close()
+	if err != nil {
+		return nil, err
+	}
+
 	
 }
