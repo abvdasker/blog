@@ -16,3 +16,6 @@ logger:
     levelEncoder: "capitalColor"
     timeKey: "time"
     timeEncoder: "iso8601"
+
+db:
+  hostport: 127.0.0.1:26256

@@ -3,6 +3,7 @@ package main
 import (
 	"go.uber.org/fx"
 
+	"github.com/abvdasker/blog/client"
 	"github.com/abvdasker/blog/config"
 	"github.com/abvdasker/blog/handler"
 	"github.com/abvdasker/blog/handler/api"
@@ -14,6 +15,7 @@ func main() {
 	app := fx.New(
 		handler.Module,
 		api.Module,
+		client.Module,
 
 		fx.Provide(
 			config.Load,

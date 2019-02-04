@@ -15,12 +15,17 @@ const (
 type Config struct {
 	Server ServerConfig `yaml:"server"`
 	Logger zap.Config   `yaml:"logger"`
+	DB     DBConfig     `yaml:"db"`
 }
 
 type ServerConfig struct {
 	Hostport string        `yaml:"hostport"`
 	Scheme   string        `yaml:"scheme"`
 	Timeout  time.Duration `yaml:"timeout"`
+}
+
+type DBConfig struct {
+	Hostport string `yaml:"hostport"`
 }
 
 func Load() (*Config, error) {
