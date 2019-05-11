@@ -18,4 +18,5 @@ logger:
     timeEncoder: "iso8601"
 
 db:
-  hostport: 127.0.0.1:26256
+  hostport: 127.0.0.1:26257
+  disableSSL: true

@@ -13,9 +13,9 @@ func NewRouter(
 ) *httprouter.Router {
 	router := httprouter.New()
 
-	router.GET("/", staticHandler.Index())
-	router.GET("/static/*filepath", staticHandler.Static())
 	router.GET("/api/articles", articlesHandler.Articles())
+	router.GET("/static/*filepath", staticHandler.Static())
+	router.GET("/", staticHandler.Index())
 
 	return router
 

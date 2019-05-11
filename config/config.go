@@ -26,6 +26,7 @@ type ServerConfig struct {
 
 type DBConfig struct {
 	Hostport string `yaml:"hostport"`
+	DisableSSL bool `yaml:"disableSSL"`
 }
 
 func Load() (*Config, error) {
@@ -40,4 +41,11 @@ func Load() (*Config, error) {
 	}
 
 	return cfg, nil
+}
+
+func (c DBConfig) DisableSSLStr() string {
+	if c.DisableSSL {
+		return "disable"
+	}
+	return "enable"
 }

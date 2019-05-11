@@ -4,10 +4,11 @@ import (
 	"encoding/json"
 	"net/http"
 	"time"
+	"context"
 
 	"github.com/julienschmidt/httprouter"
 
-	"github.com/abvdasker/blog/model"
+	"github.com/abvdasker/blog/dal"
 )
 
 type Articles interface {
@@ -15,10 +16,13 @@ type Articles interface {
 }
 
 type articles struct {
+	articlesDAL dal.Articles
 }
 
-func NewArticles() Articles {
-	return &articles{}
+func NewArticles(articlesDAL dal.Articles) Articles {
+	return &articles{
+		articlesDAL: articlesDAL,
+	}
 }
 
 func (a *articles) Articles() httprouter.Handle {
@@ -26,34 +30,18 @@ func (a *articles) Articles() httprouter.Handle {
 }
 
 func (a *articles) Handle(responseWriter http.ResponseWriter, request *http.Request, params httprouter.Params) {
-	articles := []model.Article{
-		{
-			Base: model.BaseArticle{
-				ID:        1,
-				Title:     "The bandwagon",
-				URLSlug:   "the-bandwagon",
-				Tags:      []string{"introduction", "welcome"},
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
-			},
-			HTML: `<p>Welcome to my blog.</p>
-<p>Today I started my blog and it was good. Read it and enjoy the blog. Everything on here is good. Rest assured. No bad quality.</p>
-`,
-		},
-		{
-			Base: model.BaseArticle{
-				ID:        2,
-				Title:     "Another article",
-				URLSlug:   "the-bandwagon",
-				Tags:      []string{"introduction", "welcome"},
-				CreatedAt: time.Now(),
-				UpdatedAt: time.Now(),
-			},
-			HTML: `<p>Welcome to my blog.</p>
-<p>Today I started my blog and it was good. Read it and enjoy the blog. Everything on here is good. Rest assured. No bad quality.</p>
-`,
-		},
+	then := time.Time{}
+	now := time.Now()
+	ctx := context.Background()
+	articles, err := a.articlesDAL.ReadByDate(
+		ctx,
+		then, now,
+		1000, 0,
+	)
+	if err != nil {
+		respondErr(responseWriter, "error reading articles from database")
 	}
+
 	data, err := json.Marshal(articles)
 	if err != nil {
 		respondErr(responseWriter, "error serializing article data")

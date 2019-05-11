@@ -3,9 +3,11 @@ package server
 import (
 	"net/http"
 
+	"go.uber.org/zap"
+	"github.com/julienschmidt/httprouter"
+
 	"github.com/abvdasker/blog/config"
 	"github.com/abvdasker/blog/handler"
-	"github.com/julienschmidt/httprouter"
 )
 
 type Server interface {
@@ -15,11 +17,13 @@ type Server interface {
 type server struct {
 	cfg  *config.Config
 	base *http.Server
+	logger *zap.SugaredLogger
 }
 
-func New(cfg *config.Config, router *httprouter.Router, middleware handler.Middleware) Server {
+func New(cfg *config.Config, router *httprouter.Router, middleware handler.Middleware, logger *zap.SugaredLogger) Server {
 	return &server{
 		cfg: cfg,
+		logger: logger,
 		base: &http.Server{
 			Addr:        cfg.Server.Hostport,
 			ReadTimeout: cfg.Server.Timeout,
@@ -29,6 +33,7 @@ func New(cfg *config.Config, router *httprouter.Router, middleware handler.Middl
 }
 
 func (s *server) Start() error {
+	s.logger.With(zap.String("hostport", s.cfg.Server.Hostport)).Info("Server starting")
 	return s.base.ListenAndServe()
 }
 
