@@ -2,7 +2,7 @@
 
 var Net = (function() {
   var DONE = 4;
-  var ARTICLES = "/api/articles";
+  var JSON_CONTENT_TYPE = "application/json;charset=UTF-8";
 
   function onResponse(onSuccess, onErr) {
     return function() {
@@ -21,23 +21,48 @@ var Net = (function() {
     }
   }
 
-  function get(url, onSuccess, onErr) {
-    var request = new XMLHttpRequest();
-    request.onreadystatechange = onResponse(onSuccess, onErr);
-    request.open("GET", url, true);
+  function get(url, headers, onSuccess, onErr) {
+    var request = newRequest(headers, function(request) {
+      request.open("GET", url, true);
+    }, onSuccess, onErr);
     request.send();
   }
 
-  function post(url, body, onSuccess, onErr) {
+  function post(url, headers, body, onSuccess, onErr) {
+    var request = newRequest(headers, function(request) {
+      request.open("POST", url, true);
+    }, onSuccess, onErr);
+    request.send(body);
+  }
+
+  function newRequest(headers, openRequest, onSuccess, onErr) {
     var request = new XMLHttpRequest();
     request.onreadystatechange = onResponse(onSuccess, onErr);
-    request.open("POST", url, true);
-    request.send(body);
+    openRequest(request);
+    setHeaders(request, headers);
+    maybeSetAuthHeader(request);
+    return request;
+  }
+
+  function setHeaders(request, headers) {
+    Object.keys(headers).forEach(function(key) {
+      var value = headers[key];
+      request.setRequestHeader(key, value);
+    });
+  }
+
+  function maybeSetAuthHeader(request) {
+    var token = Auth.getToken();
+    if (token) {
+      var headerValue = `Bearer ${token}`;
+      request.setRequestHeader("Authorization", headerValue);
+    }
   }
 
   function getJSON(url, onSuccess, onErr) {
     get(
       url,
+      { "Content-Type": JSON_CONTENT_TYPE },
       function(responseText) {
         if (onSuccess) {
           var response = JSON.parse(responseText);
@@ -55,6 +80,7 @@ var Net = (function() {
   function postJSON(url, body, onSuccess, onErr) {
     post(
       url,
+      { "Content-Type": JSON_CONTENT_TYPE },
       JSON.stringify(body),
       function(responseText) {
         if (onSuccess) {
@@ -71,6 +97,7 @@ var Net = (function() {
   }
 
   return {
+    get: get,
     getJSON: getJSON,
     postJSON: postJSON,
   }
