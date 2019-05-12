@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	readByDateQuery = `SELECT id, title, url_string, html, tags, created_at, updated_at FROM articles WHERE CREATED_AT > ? AND CREATED_AT < ? LIMIT ? OFFSET ?`
+	readByDateQuery = `SELECT id, title, url_string, html, tags, created_at, updated_at FROM articles WHERE CREATED_AT > $1 AND CREATED_AT < $2 LIMIT $3 OFFSET $4`
 )
 
 type Articles interface {
