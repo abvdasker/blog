@@ -3,8 +3,8 @@ package handler
 import (
 	"net/http"
 
-	"go.uber.org/zap"
 	"github.com/julienschmidt/httprouter"
+	"go.uber.org/zap"
 )
 
 type Static interface {

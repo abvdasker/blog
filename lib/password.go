@@ -1,8 +1,8 @@
 package lib
 
 import (
-	"fmt"
 	"crypto/subtle"
+	"fmt"
 )
 
 const (

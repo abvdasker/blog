@@ -6,12 +6,12 @@ import (
 	"io/ioutil"
 	"net/http"
 
-	"go.uber.org/zap"
 	"github.com/julienschmidt/httprouter"
+	"go.uber.org/zap"
 
 	"github.com/abvdasker/blog/dal"
-	"github.com/abvdasker/blog/model"
 	"github.com/abvdasker/blog/lib"
+	"github.com/abvdasker/blog/model"
 )
 
 type Users interface {
@@ -19,16 +19,16 @@ type Users interface {
 }
 
 type users struct {
-	usersDAL dal.Users
+	usersDAL  dal.Users
 	tokensDAL dal.Tokens
-	logger *zap.SugaredLogger
+	logger    *zap.SugaredLogger
 }
 
 func NewUsers(usersDAL dal.Users, tokensDAL dal.Tokens, logger *zap.SugaredLogger) Users {
 	return &users{
-		usersDAL: usersDAL,
+		usersDAL:  usersDAL,
 		tokensDAL: tokensDAL,
-		logger: logger,
+		logger:    logger,
 	}
 }
 

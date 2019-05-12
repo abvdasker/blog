@@ -2,9 +2,9 @@ package dal
 
 import (
 	"context"
-	"time"
 	"database/sql"
 	"errors"
+	"time"
 
 	"github.com/abvdasker/blog/model"
 )
@@ -47,14 +47,14 @@ func (a *articles) ReadByDate(
 	defer rows.Close()
 
 	articles := make([]*model.Article, 0, 0)
-	
+
 	for rows.Next() {
 		var (
-			id int
-			title string
+			id        int
+			title     string
 			urlString string
-			html string
-			tags []string
+			html      string
+			tags      []string
 			createdAt time.Time
 			updatedAt time.Time
 		)
@@ -63,10 +63,10 @@ func (a *articles) ReadByDate(
 			return nil, err
 		}
 		baseArticle := model.BaseArticle{
-			ID: id,
-			Title: title,
-			URLSlug: urlString,
-			Tags: tags,
+			ID:        id,
+			Title:     title,
+			URLSlug:   urlString,
+			Tags:      tags,
 			CreatedAt: createdAt,
 			UpdatedAt: updatedAt,
 		}
@@ -74,7 +74,7 @@ func (a *articles) ReadByDate(
 			Base: baseArticle,
 			HTML: html,
 		}
-		
+
 		articles = append(articles, article)
 	}
 

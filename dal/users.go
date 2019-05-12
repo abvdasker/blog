@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	readByUsernameQuery = `SELECT id, username, password_hash, salt, is_admin, created_at, updated_at FROM users WHERE username = ?`
+	readByUsernameQuery = `SELECT id, username, password_hash, salt, is_admin, created_at, updated_at FROM users WHERE username = @username`
 )
 
 type Users interface {
@@ -32,18 +32,14 @@ func (a *users) ReadByUsername(
 	ctx context.Context,
 	username string,
 ) (*model.User, error) {
-	rows, err := a.db.QueryContext(ctx, readByUsernameQuery, username)
-	if err != nil {
-		return nil, err
-	}
-	defer rows.Close()
-
-	if !rows.Next() {
-		return nil, nil
-	}
+	row := a.db.QueryRowContext(
+		ctx,
+		readByUsernameQuery,
+		sql.Named("username", username),
+	)
 
 	user := new(model.User)
-	err = rows.Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Salt, &user.IsAdmin, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt)
+	err := row.Scan(&user.ID, &user.Username, &user.IsAdmin, &user.Salt, &user.IsAdmin, &user.PasswordHash, &user.CreatedAt, &user.UpdatedAt)
 	if err != nil {
 		return nil, err
 	}

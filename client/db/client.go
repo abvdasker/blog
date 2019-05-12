@@ -1,11 +1,11 @@
 package db
 
 import (
-	"fmt"
 	"database/sql"
+	"fmt"
 
-	"go.uber.org/zap"
 	_ "github.com/lib/pq"
+	"go.uber.org/zap"
 
 	"github.com/abvdasker/blog/config"
 )

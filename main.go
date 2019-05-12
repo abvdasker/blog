@@ -3,9 +3,9 @@ package main
 import (
 	"go.uber.org/fx"
 
-	"github.com/abvdasker/blog/dal"
 	"github.com/abvdasker/blog/client"
 	"github.com/abvdasker/blog/config"
+	"github.com/abvdasker/blog/dal"
 	"github.com/abvdasker/blog/handler"
 	"github.com/abvdasker/blog/handler/api"
 	"github.com/abvdasker/blog/lib"
