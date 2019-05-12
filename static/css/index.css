@@ -34,6 +34,10 @@ h1 {
     padding: 2em 0;
 }
 
+.v-pad-sm {
+    padding: 0.5em 0;
+}
+
 .left-pad-md {
     padding-left: 2em;
 }

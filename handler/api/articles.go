@@ -12,7 +12,7 @@ import (
 )
 
 type Articles interface {
-	Articles() httprouter.Handle
+	GetArticles() httprouter.Handle
 }
 
 type articles struct {
@@ -25,7 +25,7 @@ func NewArticles(articlesDAL dal.Articles) Articles {
 	}
 }
 
-func (a *articles) Articles() httprouter.Handle {
+func (a *articles) GetArticles() httprouter.Handle {
 	return a.Handle
 }
 
@@ -48,9 +48,4 @@ func (a *articles) Handle(responseWriter http.ResponseWriter, request *http.Requ
 		return
 	}
 	responseWriter.Write(data)
-}
-
-func respondErr(responseWriter http.ResponseWriter, msg string) {
-	responseWriter.WriteHeader(500)
-	responseWriter.Write([]byte(msg))
 }

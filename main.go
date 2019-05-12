@@ -17,8 +17,8 @@ func main() {
 		handler.Module,
 		api.Module,
 		client.Module,
+		dal.Module,
 		fx.Provide(
-			dal.NewArticles,
 			config.Load,
 			server.NewRouter,
 			server.New,

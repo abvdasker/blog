@@ -1,4 +1,4 @@
-package api
+package dal
 
 import (
 	"go.uber.org/fx"
@@ -7,4 +7,5 @@ import (
 var Module = fx.Provide(
 	NewArticles,
 	NewUsers,
+	NewTokens,
 )

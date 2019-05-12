@@ -25,10 +25,10 @@ type articles struct {
 	db *sql.DB
 }
 
-func NewArticles(database *sql.DB) (Articles, error) {
+func NewArticles(database *sql.DB) Articles {
 	return &articles{
 		db: database,
-	}, nil
+	}
 }
 
 func (a *articles) ReadByDate(
