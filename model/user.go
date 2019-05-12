@@ -2,10 +2,12 @@ package model
 
 import (
 	"time"
+
+	"github.com/abvdasker/blog/lib"
 )
 
 type User struct {
-	ID       int    `json:"id"`
+	UUID     string `json:"uuid"`
 	Username string `json:"username"`
 	IsAdmin  bool   `json:"is_admin"`
 
@@ -16,14 +18,14 @@ type User struct {
 	UpdatedAt time.Time `json:"updated_at"`
 }
 
-func NewUser(username string, password string, isAdmin boll) *User {
+func NewUser(username string, password string, isAdmin bool) *User {
 	salt := lib.RandomSalt64()
 	now := time.Now()
 	return &User{
 		Username: username,
-		IsAdmin: isAdmin,
+		IsAdmin:  isAdmin,
 
-		Salt: salt,
+		Salt:         salt,
 		PasswordHash: lib.HashPassword64(username, salt, password),
 
 		CreatedAt: now,

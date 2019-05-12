@@ -17,6 +17,7 @@ import (
 
 type Users interface {
 	Login() httprouter.Handle
+	Create() httprouter.Handle
 }
 
 type users struct {
@@ -64,8 +65,9 @@ func (a *users) HandleLogin(responseWriter http.ResponseWriter, rawRequest *http
 		respondUnauthorized(responseWriter, "incorrect username or password")
 		return
 	}
-	token := model.NewToken(user.ID, user.Username, user.Salt)
+	token := model.NewToken(user.UUID, user.Username, user.Salt)
 	if err := a.tokensDAL.Create(ctx, token); err != nil {
+		a.logger.With(zap.Error(err)).Error("failed to write token to database")
 		respondErr(responseWriter, "failed to write token to database")
 		return
 	}
@@ -80,12 +82,17 @@ func (a *users) HandleLogin(responseWriter http.ResponseWriter, rawRequest *http
 
 func (a *users) HandleCreate(responseWriter http.ResponseWriter, rawRequest *http.Request, _ httprouter.Params) {
 	ctx := context.Background()
-	request := parseCreateRequest(rawRequest)
+	request, err := parseCreateUserRequest(rawRequest)
+	if err != nil {
+		respondErr(responseWriter, "failed to parse request")
+		return
+	}
 	user := request.ToUser()
-	if err := a.usersDAL.Create(user); err != nil {
+	if err := a.usersDAL.Create(ctx, user); err != nil {
 		respondErr(responseWriter, fmt.Sprintf("could not create user with username %s", user.Username))
 		return
 	}
+
 	return
 }
 

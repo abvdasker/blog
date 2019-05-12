@@ -17,8 +17,10 @@ func NewRouter(
 	router.GET("/api/articles", articlesHandler.GetArticles())
 	router.POST("/api/users/login", usersHandler.Login())
 	router.POST("/api/users", usersHandler.Create())
-	router.GET("/static/*filepath", staticHandler.Static())
+
 	router.GET("/", staticHandler.Index())
+	router.GET("/static/*filepath", staticHandler.Static())
+	router.GET("/cms/*filepath", staticHandler.CMS())
 
 	return router
 }

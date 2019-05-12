@@ -11,20 +11,20 @@ const (
 )
 
 type Token struct {
-	ID     int    `json:"-"`
-	Token  string `json:"token"`
-	UserID int    `json:"userID"`
+	UUID     string `json:"-"`
+	Token    string `json:"token"`
+	UserUUID string    `json:"userUUID"`
 
 	CreatedAt time.Time `json:"createdAt"`
 	ExpiresAt time.Time `json:"expiresAt"`
 }
 
-func NewToken(userID int, username string, salt string) *Token {
+func NewToken(userUUID, username, salt string) *Token {
 	now := time.Now()
 	expiresAt := now.Add(defaultTokenExpiration)
 	return &Token{
 		Token:     lib.GenerateToken(username, salt, expiresAt),
-		UserID:    userID,
+		UserUUID:  userUUID,
 		CreatedAt: now,
 		ExpiresAt: expiresAt,
 	}

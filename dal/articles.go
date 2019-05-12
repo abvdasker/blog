@@ -10,7 +10,7 @@ import (
 )
 
 const (
-	readByDateQuery = `SELECT id, title, url_string, html, tags, created_at, updated_at FROM articles WHERE CREATED_AT > $1 AND CREATED_AT < $2 LIMIT $3 OFFSET $4`
+	readByDateQuery = `SELECT uuid, title, url_string, html, tags, created_at, updated_at FROM articles WHERE CREATED_AT > $1 AND CREATED_AT < $2 LIMIT $3 OFFSET $4`
 )
 
 type Articles interface {
@@ -50,7 +50,7 @@ func (a *articles) ReadByDate(
 
 	for rows.Next() {
 		var (
-			id        int
+			uuid      string
 			title     string
 			urlString string
 			html      string
@@ -58,12 +58,12 @@ func (a *articles) ReadByDate(
 			createdAt time.Time
 			updatedAt time.Time
 		)
-		err := rows.Scan(&id, &title, &urlString, &html, &tags, &createdAt, &updatedAt)
+		err := rows.Scan(&uuid, &title, &urlString, &html, &tags, &createdAt, &updatedAt)
 		if err != nil {
 			return nil, err
 		}
 		baseArticle := model.BaseArticle{
-			ID:        id,
+			UUID:      uuid,
 			Title:     title,
 			URLSlug:   urlString,
 			Tags:      tags,
