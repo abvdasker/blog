@@ -7,7 +7,11 @@ import (
 
 const (
 	passwordDigestTemplate = "%s|%s|%s"
+	saltRandomBytes = 8
 )
+
+func RandomSalt64() string {
+}
 
 func HashPassword64(username, salt, password string) string {
 	digest := createDigest(username, salt, password)

@@ -1,6 +1,7 @@
 package api
 
 import (
+	"fmt"
 	"context"
 	"encoding/json"
 	"io/ioutil"
@@ -33,12 +34,16 @@ func NewUsers(usersDAL dal.Users, tokensDAL dal.Tokens, logger *zap.SugaredLogge
 }
 
 func (a *users) Login() httprouter.Handle {
-	return a.Handle
+	return a.HandleLogin
 }
 
-func (a *users) Handle(responseWriter http.ResponseWriter, rawRequest *http.Request, _ httprouter.Params) {
+func (a *users) Create() httprouter.Handle {
+	return a.HandleCreate
+}
+
+func (a *users) HandleLogin(responseWriter http.ResponseWriter, rawRequest *http.Request, _ httprouter.Params) {
 	ctx := context.Background()
-	request, err := parseRequest(rawRequest)
+	request, err := parseLoginRequest(rawRequest)
 	user, err := a.usersDAL.ReadByUsername(
 		ctx,
 		request.Username,
@@ -73,14 +78,40 @@ func (a *users) Handle(responseWriter http.ResponseWriter, rawRequest *http.Requ
 	responseWriter.Write(data)
 }
 
-func parseRequest(rawRequest *http.Request) (*model.LoginRequest, error) {
-	data, err := ioutil.ReadAll(rawRequest.Body)
-	if err != nil {
-		return nil, err
+func (a *users) HandleCreate(responseWriter http.ResponseWriter, rawRequest *http.Request, _ httprouter.Params) {
+	ctx := context.Background()
+	request := parseCreateRequest(rawRequest)
+	user := request.ToUser()
+	if err := a.usersDAL.Create(user); err != nil {
+		respondErr(responseWriter, fmt.Sprintf("could not create user with username %s", user.Username))
+		return
 	}
+	return
+}
+
+func parseLoginRequest(rawRequest *http.Request) (*model.LoginRequest, error) {
 	request := new(model.LoginRequest)
-	if err = json.Unmarshal(data, request); err != nil {
+	if err := parseRequest(rawRequest, request); err != nil {
 		return nil, err
 	}
 	return request, nil
+}
+
+func parseCreateUserRequest(rawRequest *http.Request) (*model.CreateUserRequest, error) {
+	request := new(model.CreateUserRequest)
+	if err := parseRequest(rawRequest, request); err != nil {
+		return nil, err
+	}
+	return request, nil
+}
+
+func parseRequest(rawRequest *http.Request, request interface{}) (error) {
+	data, err := ioutil.ReadAll(rawRequest.Body)
+	if err != nil {
+		return err
+	}
+	if err = json.Unmarshal(data, request); err != nil {
+		return err
+	}
+	return nil
 }
