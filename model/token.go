@@ -13,7 +13,7 @@ const (
 type Token struct {
 	UUID     string `json:"-"`
 	Token    string `json:"token"`
-	UserUUID string    `json:"userUUID"`
+	UserUUID string `json:"userUUID"`
 
 	CreatedAt time.Time `json:"createdAt"`
 	ExpiresAt time.Time `json:"expiresAt"`

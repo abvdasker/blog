@@ -1,9 +1,9 @@
 package api
 
 import (
-	"fmt"
 	"context"
 	"encoding/json"
+	"fmt"
 	"io/ioutil"
 	"net/http"
 
@@ -112,7 +112,7 @@ func parseCreateUserRequest(rawRequest *http.Request) (*model.CreateUserRequest,
 	return request, nil
 }
 
-func parseRequest(rawRequest *http.Request, request interface{}) (error) {
+func parseRequest(rawRequest *http.Request, request interface{}) error {
 	data, err := ioutil.ReadAll(rawRequest.Body)
 	if err != nil {
 		return err
