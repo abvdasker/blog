@@ -11,6 +11,7 @@ import (
 
 const (
 	readByDateQuery = `SELECT uuid, title, url_string, html, tags, created_at, updated_at FROM articles WHERE CREATED_AT > $1 AND CREATED_AT < $2 LIMIT $3 OFFSET $4`
+	createArticle = `INSERT INTO articles (uuid, title, html, url_slug, tags, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)`
 )
 
 type Articles interface {
@@ -19,6 +20,10 @@ type Articles interface {
 		start, end time.Time,
 		limit, offset int,
 	) ([]*model.Article, error)
+	Create(
+		ctx context.Context,
+		article *model.Article,
+	) error
 }
 
 type articles struct {
@@ -79,4 +84,22 @@ func (a *articles) ReadByDate(
 	}
 
 	return articles, nil
+}
+
+func (a *articles) Create(
+	ctx context.Context,
+	article *model.Article,
+) error {
+	_, err := a.db.ExecContext(
+		ctx,
+		createArticle,
+		article.Base.UUID,
+		article.Base.Title,
+		article.HTML,
+		article.Base.URLSlug,
+		article.Base.Tags,
+		article.Base.CreatedAt,
+		article.Base.UpdatedAt,
+	)
+	return err
 }

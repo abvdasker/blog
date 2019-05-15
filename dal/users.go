@@ -10,7 +10,7 @@ import (
 const (
 	readByUsernameQuery = `SELECT uuid, username, password_hash, salt, is_admin, created_at, updated_at FROM users WHERE username = $1`
 
-	createUser = `INSERT INTO users (username, password_hash, salt, is_admin, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)`
+	createUser = `INSERT INTO users (uuid, username, password_hash, salt, is_admin, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`
 )
 
 type Users interface {
@@ -60,6 +60,7 @@ func (a *users) Create(ctx context.Context, user *model.User) error {
 	_, err := a.db.ExecContext(
 		ctx,
 		createUser,
+		user.UUID,
 		user.Username,
 		user.PasswordHash,
 		user.Salt,

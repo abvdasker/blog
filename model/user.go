@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/abvdasker/blog/lib"
+	"github.com/abvdasker/blog/lib/uuid"
 )
 
 type User struct {
@@ -22,6 +23,7 @@ func NewUser(username string, password string, isAdmin bool) *User {
 	salt := lib.RandomSalt64()
 	now := time.Now()
 	return &User{
+		UUID:     uuid.New().String(),
 		Username: username,
 		IsAdmin:  isAdmin,
 

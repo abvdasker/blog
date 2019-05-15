@@ -14,10 +14,15 @@ var Auth = (function() {
   function loggedIn() {
     return getToken() != null;
   }
+
+  function logout() {
+    localStorage.removeItem(LOCAL_STORAGE_TOKEN_KEY);
+  }
   
   return {
     setToken: setToken,
     getToken: getToken,
     loggedIn: loggedIn,
+    logout: logout,
   };
 })()

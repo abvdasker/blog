@@ -38,6 +38,14 @@ h1 {
     padding: 0.5em 0;
 }
 
+.v-marg-md {
+    margin: 2em 0;
+}
+
+.h-marg-md {
+    margin: 0 2em;
+}
+
 .left-pad-md {
     padding-left: 2em;
 }
@@ -68,4 +76,9 @@ h1 {
 .right {
     display: inline-block;
     float: right;
+}
+
+.editor {
+    width: 100%;
+    height: 20em;
 }

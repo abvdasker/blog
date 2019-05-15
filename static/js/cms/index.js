@@ -2,6 +2,7 @@
 
 var SUBMIT_PATH = "/api/users/login";
 var LOGIN_PATH = "/static/html/cms/login.html";
+var EDIT_PATH = "/static/html/cms/edit.html";
 
 // if user is already logged in, render cms
 // else render login
@@ -20,19 +21,41 @@ window.onload = function init() {
   function renderLogin(container) {
     Net.get(LOGIN_PATH, {}, function(response) {
       container.innerHTML = response;
-      addSubmitListener();
+      addSubmitLoginListener();
     }, function (err) {
       console.error("failed to fetch login");
       console.error(err);
     })
   }
 
-  function addSubmitListener() {
-    var loginForm = document.getElementById("login");
-    loginForm.addEventListener("submit", onSubmit);
+  function renderCMS(container) {
+    Net.get(EDIT_PATH, {}, function(response) {
+      container.innerHTML = response;
+      var logoutButton = document.getElementById("logout");
+      var submitButton = document.getElementById("submit-edit");
+
+      logoutButton.addEventListener("click", onLogout);
+      submitButton.addEventListener("click", onSubmitEdit)
+    }, function(err) {
+      console.error(err);
+    });
   }
 
-  function onSubmit(event) {
+  function addSubmitLoginListener() {
+    var loginForm = document.getElementById("login");
+    loginForm.addEventListener("submit", onSubmitLogin);
+  }
+
+  function onSubmitEdit(event) {
+    console.log("edit submitted");
+  }
+
+  function onLogout(event) {
+    Auth.logout();
+    render();
+  }
+
+  function onSubmitLogin(event) {
     event.preventDefault();
     var loginRequest = buildLoginRequest();
     Net.postJSON(SUBMIT_PATH, loginRequest, function(response) {
@@ -54,10 +77,5 @@ window.onload = function init() {
     };
   }
 
-  function renderCMS(container) {
-    console.log("logged in. Rendering CMS");
-  }
-
   render();
-  //addSubmitListener();
 }

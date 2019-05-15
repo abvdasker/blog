@@ -2,6 +2,14 @@
 
 
 [[projects]]
+  digest = "1:141cc9fc6279592458b304038bd16a05ef477d125c6dad281216345a11746fd7"
+  name = "github.com/gofrs/uuid"
+  packages = ["."]
+  pruneopts = ""
+  revision = "6b08a5c5172ba18946672b49749cde22873dd7c2"
+  version = "v3.2.0"
+
+[[projects]]
   digest = "1:deeb6536ebbcb66ab11213ecfaac9daadfcd004dd057446a4980ffd6c15c36e2"
   name = "github.com/julienschmidt/httprouter"
   packages = ["."]
@@ -88,6 +96,7 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "github.com/gofrs/uuid",
     "github.com/julienschmidt/httprouter",
     "github.com/lib/pq",
     "go.uber.org/fx",

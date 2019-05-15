@@ -9,10 +9,12 @@ import (
 	"github.com/julienschmidt/httprouter"
 
 	"github.com/abvdasker/blog/dal"
+	"github.com/abvdasker/blog/model"
 )
 
 type Articles interface {
 	GetArticles() httprouter.Handle
+	CreateArticle() httprouter.Handle
 }
 
 type articles struct {
@@ -26,10 +28,14 @@ func NewArticles(articlesDAL dal.Articles) Articles {
 }
 
 func (a *articles) GetArticles() httprouter.Handle {
-	return a.Handle
+	return a.HandleGetArticles
 }
 
-func (a *articles) Handle(responseWriter http.ResponseWriter, request *http.Request, params httprouter.Params) {
+func (a *articles) CreateArticle() httprouter.Handle {
+	return a.HandleCreateArticle
+}
+
+func (a *articles) HandleGetArticles(responseWriter http.ResponseWriter, request *http.Request, params httprouter.Params) {
 	then := time.Time{}
 	now := time.Now()
 	ctx := context.Background()
@@ -40,6 +46,7 @@ func (a *articles) Handle(responseWriter http.ResponseWriter, request *http.Requ
 	)
 	if err != nil {
 		respondErr(responseWriter, "error reading articles from database")
+		return
 	}
 
 	data, err := json.Marshal(articles)
@@ -48,4 +55,39 @@ func (a *articles) Handle(responseWriter http.ResponseWriter, request *http.Requ
 		return
 	}
 	responseWriter.Write(data)
+}
+
+func (a *articles) HandleCreateArticle(responseWriter http.ResponseWriter, rawRequest *http.Request, params httprouter.Params) {
+	ctx := context.Background()
+	request, err := parseCreateArticleRequest(rawRequest)
+	if err != nil {
+		respondErr(responseWriter, "failed to parse request")
+		return
+	}
+	article := request.ToArticle()
+
+	err = a.articlesDAL.Create(
+		ctx,
+		article,
+	)
+	if err != nil {
+		respondErr(responseWriter, "error writing article to database")
+		return
+	}
+
+	data, err := json.Marshal(article)
+	if err != nil {
+		respondErr(responseWriter, "error serializing article data")
+		return
+	}
+	responseWriter.Write(data)
+}
+
+func parseCreateArticleRequest(rawRequest *http.Request) (*model.CreateArticleRequest, error) {
+	request := new(model.CreateArticleRequest)
+
+	if err := parseRequest(rawRequest, request); err != nil {
+		return nil, err
+	}
+	return request, nil
 }

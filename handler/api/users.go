@@ -4,7 +4,6 @@ import (
 	"context"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"net/http"
 
 	"github.com/julienschmidt/httprouter"
@@ -45,6 +44,11 @@ func (a *users) Create() httprouter.Handle {
 func (a *users) HandleLogin(responseWriter http.ResponseWriter, rawRequest *http.Request, _ httprouter.Params) {
 	ctx := context.Background()
 	request, err := parseLoginRequest(rawRequest)
+	if err != nil {
+		respondErr(responseWriter, "failed to parse request")
+		return
+	}
+
 	user, err := a.usersDAL.ReadByUsername(
 		ctx,
 		request.Username,
@@ -65,6 +69,7 @@ func (a *users) HandleLogin(responseWriter http.ResponseWriter, rawRequest *http
 		respondUnauthorized(responseWriter, "incorrect username or password")
 		return
 	}
+
 	token := model.NewToken(user.UUID, user.Username, user.Salt)
 	if err := a.tokensDAL.Create(ctx, token); err != nil {
 		a.logger.With(zap.Error(err)).Error("failed to write token to database")
@@ -87,13 +92,19 @@ func (a *users) HandleCreate(responseWriter http.ResponseWriter, rawRequest *htt
 		respondErr(responseWriter, "failed to parse request")
 		return
 	}
+
 	user := request.ToUser()
 	if err := a.usersDAL.Create(ctx, user); err != nil {
 		respondErr(responseWriter, fmt.Sprintf("could not create user with username %s", user.Username))
 		return
 	}
 
-	return
+	data, err := json.Marshal(user)
+	if err != nil {
+		respondErr(responseWriter, "error serializing user data")
+		return
+	}
+	responseWriter.Write(data)
 }
 
 func parseLoginRequest(rawRequest *http.Request) (*model.LoginRequest, error) {
@@ -110,15 +121,4 @@ func parseCreateUserRequest(rawRequest *http.Request) (*model.CreateUserRequest,
 		return nil, err
 	}
 	return request, nil
-}
-
-func parseRequest(rawRequest *http.Request, request interface{}) error {
-	data, err := ioutil.ReadAll(rawRequest.Body)
-	if err != nil {
-		return err
-	}
-	if err = json.Unmarshal(data, request); err != nil {
-		return err
-	}
-	return nil
 }

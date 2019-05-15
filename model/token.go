@@ -4,6 +4,7 @@ import (
 	"time"
 
 	"github.com/abvdasker/blog/lib"
+	"github.com/abvdasker/blog/lib/uuid"
 )
 
 const (
@@ -23,6 +24,7 @@ func NewToken(userUUID, username, salt string) *Token {
 	now := time.Now()
 	expiresAt := now.Add(defaultTokenExpiration)
 	return &Token{
+		UUID:      uuid.New().String(),
 		Token:     lib.GenerateToken(username, salt, expiresAt),
 		UserUUID:  userUUID,
 		CreatedAt: now,

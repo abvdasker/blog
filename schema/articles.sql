@@ -1,7 +1,7 @@
 CREATE TABLE IF NOT EXISTS articles (
        uuid UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-       title STRING,
-       url_string STRING,
+       title STRING UNIQUE,
+       url_string STRING UNIQUE,
        html STRING,
        tags STRING ARRAY,
 

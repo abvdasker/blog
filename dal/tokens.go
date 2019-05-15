@@ -8,7 +8,7 @@ import (
 )
 
 const (
-	createToken = `INSERT INTO tokens (token, user_uuid, created_at, expires_at) VALUES ($1, $2, $3, $4)`
+	createToken = `INSERT INTO tokens (uuid, token, user_uuid, created_at, expires_at) VALUES ($1, $2, $3, $4, $5)`
 )
 
 type Tokens interface {
@@ -35,6 +35,7 @@ func (a *tokens) Create(
 	_, err := a.db.ExecContext(
 		ctx,
 		createToken,
+		token.UUID,
 		token.Token,
 		token.UserUUID,
 		token.CreatedAt,

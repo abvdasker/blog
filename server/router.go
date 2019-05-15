@@ -15,6 +15,7 @@ func NewRouter(
 	router := httprouter.New()
 
 	router.GET("/api/articles", articlesHandler.GetArticles())
+	router.POST("/api/articles", articlesHandler.CreateArticle())
 	router.POST("/api/users/login", usersHandler.Login())
 	router.POST("/api/users", usersHandler.Create())
 
