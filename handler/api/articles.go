@@ -7,6 +7,7 @@ import (
 	"time"
 
 	"github.com/julienschmidt/httprouter"
+	"go.uber.org/zap"
 
 	"github.com/abvdasker/blog/dal"
 	"github.com/abvdasker/blog/model"
@@ -19,11 +20,13 @@ type Articles interface {
 
 type articles struct {
 	articlesDAL dal.Articles
+	logger      *zap.SugaredLogger
 }
 
-func NewArticles(articlesDAL dal.Articles) Articles {
+func NewArticles(articlesDAL dal.Articles, logger *zap.SugaredLogger) Articles {
 	return &articles{
 		articlesDAL: articlesDAL,
+		logger:      logger,
 	}
 }
 
@@ -45,6 +48,7 @@ func (a *articles) HandleGetArticles(responseWriter http.ResponseWriter, request
 		1000, 0,
 	)
 	if err != nil {
+		a.logger.With(zap.Error(err)).Error("error reading articles to database")
 		respondErr(responseWriter, "error reading articles from database")
 		return
 	}
@@ -71,6 +75,7 @@ func (a *articles) HandleCreateArticle(responseWriter http.ResponseWriter, rawRe
 		article,
 	)
 	if err != nil {
+		a.logger.With(zap.Error(err)).Error("error writing article to database")
 		respondErr(responseWriter, "error writing article to database")
 		return
 	}

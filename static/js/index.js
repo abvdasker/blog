@@ -59,6 +59,6 @@ window.onload = function init() {
         var articleListElem = DOM.byID("article-list");
         addArticles(articleListElem, articles);
     }, function(err) {
-        throw new Exception(err);
+      console.error(err);
     })
 }

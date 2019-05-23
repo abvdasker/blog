@@ -4,13 +4,15 @@
   <div class="right-content">
     <div class="h-marg-md">
       <button id="logout">Logout</button>
+      <button id="new-article">New Article</button>
       <div id="edit">
         <label for="edit-article-title">Title:</label>
         <input id="edit-article-title" type="text"></input>
         <br/>
         <label for="edit-article-html">HTML:</label>
         <textarea id="edit-article-html" class="editor"></textarea>
-        <button id="submit-edit">Create Article</button>
+        <button id="submit-create" disabled>Create Article</button>
+        <button id="submit-update" class="hidden">Update Article</button>
       </div>
       <hr />
       <div id="preview"></div>

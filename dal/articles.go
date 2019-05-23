@@ -7,11 +7,12 @@ import (
 	"time"
 
 	"github.com/abvdasker/blog/model"
+	"github.com/lib/pq"
 )
 
 const (
-	readByDateQuery = `SELECT uuid, title, url_string, html, tags, created_at, updated_at FROM articles WHERE CREATED_AT > $1 AND CREATED_AT < $2 LIMIT $3 OFFSET $4`
-	createArticle = `INSERT INTO articles (uuid, title, html, url_slug, tags, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6)`
+	readByDateQuery = `SELECT uuid, title, url_slug, html, tags, created_at, updated_at FROM articles WHERE CREATED_AT > $1 AND CREATED_AT < $2 LIMIT $3 OFFSET $4`
+	createArticle = `INSERT INTO articles (uuid, title, html, url_slug, tags, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`
 )
 
 type Articles interface {
@@ -63,7 +64,7 @@ func (a *articles) ReadByDate(
 			createdAt time.Time
 			updatedAt time.Time
 		)
-		err := rows.Scan(&uuid, &title, &urlString, &html, &tags, &createdAt, &updatedAt)
+		err := rows.Scan(&uuid, &title, &urlString, &html, pq.Array(&tags), &createdAt, &updatedAt)
 		if err != nil {
 			return nil, err
 		}
@@ -97,7 +98,7 @@ func (a *articles) Create(
 		article.Base.Title,
 		article.HTML,
 		article.Base.URLSlug,
-		article.Base.Tags,
+		pq.Array(article.Base.Tags),
 		article.Base.CreatedAt,
 		article.Base.UpdatedAt,
 	)
