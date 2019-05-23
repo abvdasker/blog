@@ -19,11 +19,10 @@ func main() {
 		api.Module,
 		client.Module,
 		dal.Module,
+		server.Module,
 		fx.Provide(
 			middleware.NewAuth,
 			config.Load,
-			server.NewRouter,
-			server.New,
 			lib.NewLogger,
 		),
 		fx.Invoke(server.Start),
