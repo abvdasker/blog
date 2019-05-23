@@ -1,14 +1,14 @@
 package model
 
 import (
-	"time"
 	"strings"
+	"time"
 
 	"github.com/abvdasker/blog/lib/uuid"
 )
 
 var articles = map[string]bool{
-	"a": true,
+	"a":   true,
 	"the": true,
 }
 
@@ -27,20 +27,29 @@ type Article struct {
 	HTML string      `json:"html"`
 }
 
-func NewArticle(title string, html string, tags []string) *Article {
+func NewArticleWithUUID(uuid, title, html string, tags []string) *Article {
 	now := time.Now()
 	return &Article{
 		Base: BaseArticle{
-			UUID: uuid.New().String(),
-			Title: title,
+			UUID:    uuid,
+			Title:   title,
 			URLSlug: generateURLSlug(title),
-			Tags: tags,
+			Tags:    tags,
 
 			CreatedAt: now,
 			UpdatedAt: now,
 		},
 		HTML: html,
 	}
+}
+
+func NewArticle(title string, html string, tags []string) *Article {
+	return NewArticleWithUUID(
+		uuid.New().String(),
+		title,
+		html,
+		tags,
+	)
 }
 
 func generateURLSlug(title string) string {

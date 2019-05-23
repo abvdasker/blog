@@ -12,7 +12,9 @@ import (
 
 const (
 	readByDateQuery = `SELECT uuid, title, url_slug, html, tags, created_at, updated_at FROM articles WHERE CREATED_AT > $1 AND CREATED_AT < $2 LIMIT $3 OFFSET $4`
-	createArticle = `INSERT INTO articles (uuid, title, html, url_slug, tags, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`
+	createArticle   = `INSERT INTO articles (uuid, title, html, url_slug, tags, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`
+	updateArticle   = `UPDATE articles SET title = $2, html = $3, url_slug = $4, tags = $5, updated_at = $6 WHERE uuid = $1`
+	deleteArticle   = `DELETE FROM articles WHERE uuid = $1`
 )
 
 type Articles interface {
@@ -24,6 +26,14 @@ type Articles interface {
 	Create(
 		ctx context.Context,
 		article *model.Article,
+	) error
+	Update(
+		ctx context.Context,
+		article *model.Article,
+	) error
+	Delete(
+		ctx context.Context,
+		articleUUID string,
 	) error
 }
 
@@ -101,6 +111,35 @@ func (a *articles) Create(
 		pq.Array(article.Base.Tags),
 		article.Base.CreatedAt,
 		article.Base.UpdatedAt,
+	)
+	return err
+}
+
+func (a *articles) Update(
+	ctx context.Context,
+	article *model.Article,
+) error {
+	_, err := a.db.ExecContext(
+		ctx,
+		updateArticle,
+		article.Base.UUID,
+		article.Base.Title,
+		article.HTML,
+		article.Base.URLSlug,
+		pq.Array(article.Base.Tags),
+		article.Base.UpdatedAt,
+	)
+	return err
+}
+
+func (a *articles) Delete(
+	ctx context.Context,
+	articleUUID string,
+) error {
+	_, err := a.db.ExecContext(
+		ctx,
+		deleteArticle,
+		articleUUID,
 	)
 	return err
 }

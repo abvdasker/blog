@@ -10,7 +10,7 @@ var Net = (function() {
         return;
       }
 
-      if (this.status === 200 && onSuccess) {
+      if (this.status >= 200 && this.status < 300 && onSuccess) {
         onSuccess(this.responseText);
         return;
       }
@@ -33,6 +33,20 @@ var Net = (function() {
       request.open("POST", url, true);
     }, onSuccess, onErr);
     request.send(body);
+  }
+
+  function put(url, headers, body, onSuccess, onErr) {
+    var request = newRequest(headers, function(request) {
+      request.open("PUT", url, true);
+    }, onSuccess, onErr);
+    request.send(body);
+  }
+
+  function del(url, headers, onSuccess, onErr) {
+    var request = newRequest(headers, function(request) {
+      request.open("DELETE", url, true);
+    }, onSuccess, onErr);
+    request.send();
   }
 
   function newRequest(headers, openRequest, onSuccess, onErr) {
@@ -96,9 +110,30 @@ var Net = (function() {
     );
   }
 
+  function putJSON(url, body, onSuccess, onErr) {
+    put(
+      url,
+      { "Content-Type": JSON_CONTENT_TYPE },
+      JSON.stringify(body),
+      function(responseText) {
+        if (onSuccess) {
+          var response = JSON.parse(responseText);
+          onSuccess(response);
+        }
+      },
+      function(responseText) {
+        if (onErr) {
+          onErr(responseText);
+        }
+      }
+    );
+  }
+
   return {
     get: get,
     getJSON: getJSON,
     postJSON: postJSON,
+    putJSON: putJSON,
+    del: del,
   }
 })()

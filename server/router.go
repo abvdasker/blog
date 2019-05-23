@@ -16,6 +16,9 @@ func NewRouter(
 
 	router.GET("/api/articles", articlesHandler.GetArticles())
 	router.POST("/api/articles", articlesHandler.CreateArticle())
+	router.PUT("/api/articles/:uuid", articlesHandler.UpdateArticle())
+	router.DELETE("/api/articles/:uuid", articlesHandler.DeleteArticle())
+
 	router.POST("/api/users/login", usersHandler.Login())
 	router.POST("/api/users", usersHandler.Create())
 

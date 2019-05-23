@@ -52,6 +52,7 @@ window.onload = function init() {
     addLogoutListener();
     addSubmitUpdateListener();
     addSubmitCreateListener();
+    addSubmitDeleteListener();
     addEditPreviewListener();
     addNewArticleListener();
   }
@@ -79,6 +80,9 @@ window.onload = function init() {
     var articlesByDate = buildArticlesByDate(articles);
     var articleSelector = buildArticleSelector(articlesByDate);
     var articleMenu = document.getElementById("article-menu");
+    if (articleMenu.hasChildNodes()) {
+      articleMenu.removeChild(articleMenu.childNodes[0]);
+    }
     articleMenu.appendChild(articleSelector);
   }
 
@@ -194,6 +198,7 @@ window.onload = function init() {
     editElems.html.value = article.html;
     editElems.container.setAttribute("data-current-article-uuid", uuid);
     resetPreview(editElems);
+    updateMode();
   }
 
   function createLink(text, onClick) {
@@ -229,6 +234,11 @@ window.onload = function init() {
     logoutButton.addEventListener("click", onLogout);
   }
 
+  function addSubmitDeleteListener() {
+    var deleteButton = document.getElementById("submit-delete");
+    deleteButton.addEventListener("click", onSubmitDelete);
+  }
+
   function addSubmitUpdateListener() {
     var submitButton = document.getElementById("submit-update");
     submitButton.addEventListener("click", onSubmitUpdate);
@@ -252,12 +262,33 @@ window.onload = function init() {
     newArticleBtn.addEventListener("click", onNewArticle);
   }
 
-  function onNewArticle(event) {
+  function onNewArticle() {
     var editElems = getEditArticleElems();
     editElems.container.removeAttribute("data-current-article-uuid");
     editElems.title.value = "";
     editElems.html.value = "";
     resetPreview(editElems);
+    createMode();
+  }
+
+  function createMode() {
+    var submitCreateBtn = document.getElementById("submit-create");
+    var submitUpdateBtn = document.getElementById("submit-update");
+    var submitDeleteBtn = document.getElementById("submit-delete");
+
+    submitCreateBtn.classList.remove("hidden");
+    submitUpdateBtn.classList.add("hidden");
+    submitDeleteBtn.classList.add("hidden");
+  }
+
+  function updateMode() {
+    var submitCreateBtn = document.getElementById("submit-create");
+    var submitUpdateBtn = document.getElementById("submit-update");
+    var submitDeleteBtn = document.getElementById("submit-delete");
+
+    submitCreateBtn.classList.add("hidden");
+    submitUpdateBtn.classList.remove("hidden");
+    submitDeleteBtn.classList.remove("hidden");
   }
 
   function getEditArticleElems() {
@@ -320,10 +351,48 @@ window.onload = function init() {
     loginForm.addEventListener("submit", onSubmitLogin);
   }
 
+  function onSubmitDelete(event) {
+    var articleUUID = document.getElementById("edit").getAttribute("data-current-article-uuid");
+    if (!articleUUID || articleUUID === "") {
+      console.error("no current article uuid found");
+    }
+    var articleRequest = getArticleData();
+    var path = getUpdateArticlePath(articleUUID);
+    Net.del(path, {}, function(article) {
+      console.log("delete succeeded");
+      articleDeleted(articleUUID);
+    }, function(err) {
+      console.error(err);
+    });
+  }
+
+  function articleDeleted(articleUUID) {
+    delete articlesMap[articleUUID];
+    var articleLinkID = getArticleLinkIDFromUUID(articleUUID);
+    var articleLink = document.getElementById(articleLinkID);
+    pruneLinkTreeUpwards(articleLink);
+    onNewArticle();
+  }
+
+  function pruneLinkTreeUpwards(linkElem) {
+    var listItem = linkElem.parentNode;
+    var listElem = listItem.parentNode;
+    listElem.removeChild(listItem);
+    if (listElem.hasChildNodes()) {
+      return;
+    }
+    var parentListItem = listElem.parentNode;
+    if (parentListItem.nodeName !== "LI") {
+      return;
+    }
+    var siblingLinkElem = parentListItem.childNodes[0];
+    pruneLinkTreeUpwards(siblingLinkElem);
+  }
+
   function onSubmitCreate(event) {
     var articleRequest = getArticleData();
     Net.postJSON(SUBMIT_EDIT_PATH, articleRequest, function(article) {
-      console.log("ARTICLE RESPONSE");
+      console.log("CREATE ARTICLE RESPONSE");
       console.log(article);
       renderArticleHistory(function() {
         editArticle(article.base.uuid);
@@ -331,7 +400,6 @@ window.onload = function init() {
     }, function(err) {
       console.error(err);
     });
-    console.log("edit submitted");
   }
 
   function onSubmitUpdate(event) {
@@ -356,7 +424,11 @@ window.onload = function init() {
   }
 
   function getArticleLinkID(article) {
-    return "article-link-" + article.base.uuid;
+    return getArticleLinkIDFromUUID(article.base.uuid);
+  }
+
+  function getArticleLinkIDFromUUID(articleUUID) {
+    return "article-link-" + articleUUID;
   }
 
   function onLogout(event) {
@@ -396,7 +468,7 @@ window.onload = function init() {
   }
 
   function getUpdateArticlePath(articleUUID) {
-    return "api/articles/" + articleUUID;
+    return "/api/articles/" + articleUUID;
   }
 
   render();

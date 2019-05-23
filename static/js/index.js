@@ -2,12 +2,10 @@
 
 window.onload = function init() {
     function addArticles(articleListElem, articles) {
-        for (var i = 0; i < 5; i++) {
-            articles.forEach(function(article) {
-                var articleElem = createArticleListItem(article);
-                articleListElem.appendChild(articleElem);
-            });
-        }
+      articles.forEach(function(article) {
+        var articleElem = createArticleListItem(article);
+        articleListElem.appendChild(articleElem);
+      });
     }
 
     function createArticleListItem(article) {
