@@ -9,6 +9,7 @@ import (
 
 const (
 	createToken = `INSERT INTO tokens (uuid, token, user_uuid, created_at, expires_at) VALUES ($1, $2, $3, $4, $5)`
+	readByToken = `SELECT uuid, token, user_uuid, created_at, expires_at FROM tokens WHERE token = $1`
 )
 
 type Tokens interface {
@@ -16,6 +17,10 @@ type Tokens interface {
 		ctx context.Context,
 		token *model.Token,
 	) error
+	ReadByToken(
+		ctx context.Context,
+		tokenStr string,
+	) (*model.Token, error)
 }
 
 type tokens struct {
@@ -42,4 +47,28 @@ func (a *tokens) Create(
 		token.ExpiresAt,
 	)
 	return err
+}
+
+func (a *tokens) ReadByToken(
+	ctx context.Context,
+	tokenStr string,
+) (*model.Token, error) {
+	row := a.db.QueryRowContext(ctx, readByToken, tokenStr)
+
+	token := new(model.Token)
+
+	err := row.Scan(
+		&token.UUID,
+		&token.Token,
+		&token.UserUUID,
+		&token.CreatedAt,
+		&token.ExpiresAt,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+	return token, nil
 }

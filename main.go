@@ -8,6 +8,7 @@ import (
 	"github.com/abvdasker/blog/dal"
 	"github.com/abvdasker/blog/handler"
 	"github.com/abvdasker/blog/handler/api"
+	"github.com/abvdasker/blog/handler/api/middleware"
 	"github.com/abvdasker/blog/lib"
 	"github.com/abvdasker/blog/server"
 )
@@ -19,6 +20,7 @@ func main() {
 		client.Module,
 		dal.Module,
 		fx.Provide(
+			middleware.NewAuth,
 			config.Load,
 			server.NewRouter,
 			server.New,
