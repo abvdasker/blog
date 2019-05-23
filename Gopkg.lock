@@ -18,23 +18,24 @@
   version = "v1.2.0"
 
 [[projects]]
-  digest = "1:29145d7af4adafd72a79df5e41456ac9e232d5a28c1cd4dacf3ff008a217fc10"
+  digest = "1:a65d93f562c7d66d8db6f0c5df8ade208e0f42d9a9626924896697351ca161b3"
   name = "github.com/lib/pq"
   packages = [
     ".",
     "oid",
+    "scram",
   ]
   pruneopts = ""
-  revision = "4ded0e9383f75c197b3a2aaa6d590ac52df6fd79"
-  version = "v1.0.0"
+  revision = "bc6a3c0594130b1e34005880bc600b6d3f49fa7f"
+  version = "v1.1.1"
 
 [[projects]]
-  digest = "1:74f86c458e82e1c4efbab95233e0cf51b7cc02dc03193be9f62cd81224e10401"
+  digest = "1:e6ff7840319b6fda979a918a8801005ec2049abca62af19211d96971d8ec3327"
   name = "go.uber.org/atomic"
   packages = ["."]
   pruneopts = ""
-  revision = "1ea20fb1cbb1cc08cbd0d913a96dead89aa18289"
-  version = "v1.3.2"
+  revision = "df976f2515e274675050de7b3f42545de80594fd"
+  version = "v1.4.0"
 
 [[projects]]
   digest = "1:59f9823653724274dec512916b56d3c902eab69edaba2b6b3d2b3a86cb7cfccc"
@@ -49,7 +50,7 @@
   version = "v1.7.0"
 
 [[projects]]
-  digest = "1:ef1cc57e2fa229c798ef502c5cd5e9c33205b372a70fa0279ac4dbb53742ac22"
+  digest = "1:d26d40be6b2ea2b0c78755ad51d69e3fb6c28c4d6c6154891b86f295487e85e2"
   name = "go.uber.org/fx"
   packages = [
     ".",
@@ -58,8 +59,8 @@
     "internal/lifecycle",
   ]
   pruneopts = ""
-  revision = "9c82e1daccdcbd27387a1f044bd3dc6d3f878bf4"
-  version = "v1.8.0"
+  revision = "3de044da969b90ad0a3e4a7867a74662f645f3f9"
+  version = "v1.9.0"
 
 [[projects]]
   digest = "1:22c7effcb4da0eacb2bb1940ee173fac010e9ef3c691f5de4b524d538bd980f5"
@@ -70,7 +71,7 @@
   version = "v1.1.0"
 
 [[projects]]
-  digest = "1:246f378f80fba6fcf0f191c486b6613265abd2bc0f2fa55a36b928c67352021e"
+  digest = "1:984e93aca9088b440b894df41f2043b6a3db8f9cf30767032770bfc4796993b0"
   name = "go.uber.org/zap"
   packages = [
     ".",
@@ -81,8 +82,8 @@
     "zapcore",
   ]
   pruneopts = ""
-  revision = "ff33455a0e382e8a81d14dd7c922020b6b5e7982"
-  version = "v1.9.1"
+  revision = "27376062155ad36be76b0f12cf1572a221d3a48c"
+  version = "v1.10.0"
 
 [[projects]]
   digest = "1:cedccf16b71e86db87a24f8d4c70b0a855872eb967cb906a66b95de56aefbd0d"
