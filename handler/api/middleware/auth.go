@@ -8,7 +8,7 @@ import (
 
 	"github.com/julienschmidt/httprouter"
 	"go.uber.org/zap"
-	
+
 	"github.com/abvdasker/blog/dal"
 	httplib "github.com/abvdasker/blog/lib/http"
 )
@@ -23,13 +23,13 @@ type Auth interface {
 
 type auth struct {
 	tokensDAL dal.Tokens
-	logger *zap.SugaredLogger
+	logger    *zap.SugaredLogger
 }
 
 func NewAuth(tokensDAL dal.Tokens, logger *zap.SugaredLogger) Auth {
 	return &auth{
 		tokensDAL: tokensDAL,
-		logger: logger,
+		logger:    logger,
 	}
 }
 
@@ -49,7 +49,7 @@ func (a *auth) Wrap(handler httprouter.Handle) httprouter.Handle {
 			httplib.RespondBadRequest(responseWriter, "invalid token value format")
 			return
 		}
-		
+
 		if tokenStrSlice[0] != authTokenType {
 			httplib.RespondUnauthorized(responseWriter, "unauthorized")
 			return
