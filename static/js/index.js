@@ -79,15 +79,9 @@ window.onload = function init() {
   }
 
   function onArticleBack() {
-    if (!articlesByURLSlug) {
-      loadArticles(function(articles) {
-        articlesByURLSlug = mapByURLSlug(articles);
-        renderArticles(articles);
-      });
-    } else {
-      var articles = articlesFromMappedByURLSlug();
+    loadArticlesCached(function(articles) {
       renderArticles(articles);
-    }
+    });
   }
 
   function articlesFromMappedByURLSlug() {
@@ -100,16 +94,10 @@ window.onload = function init() {
   }
 
   function onArticleListForward() {
-    if (!articlesByURLSlug) {
-      loadArticles(function(articles) {
-        articlesByURLSlug = mapByURLSlug(articles);
-        var article = articlesByURLSlug[history.state.articleURLSlug];
-        renderArticle(article);
-      });
-    } else {
+    loadArticlesCached(function(articles) {
       var article = articlesByURLSlug[history.state.articleURLSlug];
       renderArticle(article);
-    }
+    });
   }
 
   function renderArticle(article) {
@@ -165,22 +153,28 @@ window.onload = function init() {
     showArticleList(articleListElem);
   }
 
-  function loadArticles(onSuccess) {
-    Net.getJSON("/api/articles", onSuccess, function(err) {
-      console.error(err);
-    })
+  function loadArticlesCached(onSuccess) {
+    if (!articlesByURLSlug) {
+      Net.getJSON("/api/articles", function(articles) {
+        articlesByURLSlug = mapByURLSlug(articles);
+        onSuccess(articles);
+      }, function(err) {
+        console.error(err);
+      })
+    } else {
+      var articles = articlesFromMappedByURLSlug();
+      onSuccess(articles);
+    }
   }
 
-  function loadArticle(path) {
+  function loadArticle(path, onSuccess) {
     var urlSlug = getURLSlug(path);
     if (!urlSlug) {
       console.error("missing URL slug");
       return;
     }
     var articlePath = `/api/articles/${urlSlug}`;
-    Net.getJSON(articlePath, function(article) {
-      renderArticle(article);
-    }, function(err) {
+    Net.getJSON(articlePath, onSuccess, function(err) {
       console.error(err);
     })
   }
@@ -218,16 +212,14 @@ window.onload = function init() {
     window.onpopstate = onStateChanged;
     var path = window.location.pathname;
     if (isArticlePage(path)) {
-      return loadArticle(path);
+      return loadArticle(path, function(article) {
+        renderArticle(article);
+      });
     }
 
-    loadArticles(function(articlesJSON) {
-      articlesByURLSlug = mapByURLSlug(articlesJSON);
+    loadArticlesCached(function(articlesJSON) {
       renderArticles(articlesJSON);
     });
-  }
-
-  function runNow(cb) {
   }
 
   load();
