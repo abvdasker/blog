@@ -11,10 +11,27 @@ import (
 )
 
 const (
-	readByDateQuery = `SELECT uuid, title, url_slug, html, tags, created_at, updated_at FROM articles WHERE CREATED_AT > $1 AND CREATED_AT < $2 LIMIT $3 OFFSET $4`
-	createArticle   = `INSERT INTO articles (uuid, title, html, url_slug, tags, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`
-	updateArticle   = `UPDATE articles SET title = $2, html = $3, url_slug = $4, tags = $5, updated_at = $6 WHERE uuid = $1`
-	deleteArticle   = `DELETE FROM articles WHERE uuid = $1`
+	readByDateQuery = `
+SELECT 
+  uuid, 
+  title, 
+  url_slug, 
+  html, 
+  tags, 
+  created_at, 
+  updated_at 
+FROM articles 
+WHERE 
+  created_at > $1 
+AND 
+  created_at < $2 
+ORDER BY created_at DESC
+LIMIT $3 
+OFFSET $4`
+	createArticle = `INSERT INTO articles (uuid, title, html, url_slug, tags, created_at, updated_at) VALUES ($1, $2, $3, $4, $5, $6, $7)`
+	readByURLSlug = `SELECT uuid, title, url_slug, html, tags, created_at, updated_at FROM articles WHERE url_slug = $1`
+	updateArticle = `UPDATE articles SET title = $2, html = $3, url_slug = $4, tags = $5, updated_at = $6 WHERE uuid = $1`
+	deleteArticle = `DELETE FROM articles WHERE uuid = $1`
 )
 
 type Articles interface {
@@ -27,6 +44,10 @@ type Articles interface {
 		ctx context.Context,
 		article *model.Article,
 	) error
+	ReadByURLSlug(
+		ctx context.Context,
+		urlSlug string,
+	) (*model.Article, error)
 	Update(
 		ctx context.Context,
 		article *model.Article,
@@ -113,6 +134,36 @@ func (a *articles) Create(
 		article.Base.UpdatedAt,
 	)
 	return err
+}
+
+func (a *articles) ReadByURLSlug(
+	ctx context.Context,
+	urlSlug string,
+) (*model.Article, error) {
+	row := a.db.QueryRowContext(
+		ctx,
+		readByURLSlug,
+		urlSlug,
+	)
+	article := model.Article{}
+
+	err := row.Scan(
+		&article.Base.UUID,
+		&article.Base.Title,
+		&article.Base.URLSlug,
+		&article.HTML,
+		pq.Array(article.Base.Tags),
+		&article.Base.CreatedAt,
+		&article.Base.UpdatedAt,
+	)
+	if err == sql.ErrNoRows {
+		return nil, nil
+	}
+	if err != nil {
+		return nil, err
+	}
+
+	return &article, nil
 }
 
 func (a *articles) Update(

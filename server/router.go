@@ -16,6 +16,7 @@ func NewRouter(
 
 	router.GET("/api/articles", articlesHandler.GetArticles())
 	router.POST("/api/articles", articlesHandler.CreateArticle())
+	router.GET("/api/articles/:uuid", articlesHandler.GetArticle())
 	router.PUT("/api/articles/:uuid", articlesHandler.UpdateArticle())
 	router.DELETE("/api/articles/:uuid", articlesHandler.DeleteArticle())
 
@@ -25,6 +26,7 @@ func NewRouter(
 	router.GET("/", staticHandler.Index())
 	router.GET("/static/*filepath", staticHandler.Static())
 	router.GET("/cms/*filepath", staticHandler.CMS())
+	router.GET("/articles/*articleSlug", staticHandler.Index())
 
 	return router
 }

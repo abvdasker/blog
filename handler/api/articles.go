@@ -18,6 +18,7 @@ import (
 type Articles interface {
 	GetArticles() httprouter.Handle
 	CreateArticle() httprouter.Handle
+	GetArticle() httprouter.Handle
 	UpdateArticle() httprouter.Handle
 	DeleteArticle() httprouter.Handle
 }
@@ -43,6 +44,10 @@ func (a *articles) GetArticles() httprouter.Handle {
 
 func (a *articles) CreateArticle() httprouter.Handle {
 	return a.authMiddleware.Wrap(a.HandleCreateArticle)
+}
+
+func (a *articles) GetArticle() httprouter.Handle {
+	return a.HandleGetArticle
 }
 
 func (a *articles) UpdateArticle() httprouter.Handle {
@@ -92,6 +97,27 @@ func (a *articles) HandleCreateArticle(responseWriter http.ResponseWriter, rawRe
 	if err != nil {
 		a.logger.With(zap.Error(err)).Error("error writing article to database")
 		httplib.RespondErr(responseWriter, "error writing article to database")
+		return
+	}
+
+	data, err := json.Marshal(article)
+	if err != nil {
+		httplib.RespondErr(responseWriter, "error serializing article data")
+		return
+	}
+	responseWriter.Write(data)
+}
+
+func (a *articles) HandleGetArticle(responseWriter http.ResponseWriter, rawRequest *http.Request, params httprouter.Params) {
+	ctx := context.Background()
+	articleUUID := params.ByName("uuid")
+	article, err := a.articlesDAL.ReadByURLSlug(
+		ctx,
+		articleUUID,
+	)
+	if err != nil {
+		a.logger.With(zap.Error(err)).Error("error reading article from database")
+		httplib.RespondErr(responseWriter, "error reading article from database")
 		return
 	}
 
