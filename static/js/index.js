@@ -16,23 +16,21 @@ window.onload = function init() {
   function createArticleListItem(article) {
     var articleElem = document.createElement("div");
     articleElem.classList.add("article");
+    articleElem.setAttribute("data-url-slug", article.base.urlSlug);
+    articleElem.classList.add("h-marg-md");
 
-    var listItemContentElem = createListItemContentElem(article);
-    articleElem.appendChild(listItemContentElem);
+    createListItemContent(article, articleElem);
 
     var bottomBorder = document.createElement("hr");
     articleElem.appendChild(bottomBorder);
 
-    var elemId = articleElemId(article.base.id);
+    var elemId = articleElemId(article.base.uuid);
     articleElem.id = elemId;
 
     return articleElem;
   }
 
-  function createListItemContentElem(article) {
-    var contentElem = document.createElement("div");
-    contentElem.classList.add("left-pad-md");
-    
+  function createListItemContent(article, contentElem) {
     var titleElem = document.createElement("h2");
     var titleTextNode = document.createTextNode(article.base.title);
     titleElem.appendChild(titleTextNode);
@@ -46,22 +44,20 @@ window.onload = function init() {
     contentElem.appendChild(titleLink);
 
     var dateElem = document.createElement("span");
-    var createdAtFormatted = reformatDateString(article.base.createdAt);
+    var createdAtFormatted = formatDateForListArticle(article);
     var createdAtTextNode = document.createTextNode(createdAtFormatted);
     dateElem.appendChild(createdAtTextNode);
     dateElem.classList.add("right");
     contentElem.appendChild(dateElem);
-
-    return contentElem;
   }
 
   function articleElemId(id) {
     return `article-${id}`;
   }
 
-  function reformatDateString(dateString) {
-    var date = new Date(dateString);
-    return date.toLocaleDateString();
+  function formatDateForListArticle(article) {
+    var date = new Date(article.base.createdAt);
+    return I18n.formatDate(date);
   }
 
   function onArticleClickFn(article) {
@@ -109,7 +105,8 @@ window.onload = function init() {
     articleBody.innerHTML = article.html;
 
     var dateElem = document.createElement("span");
-    var dateText = document.createTextNode(article.base.createdAt);
+    var formattedDate = formatDateForSingleArticle(article);
+    var dateText = document.createTextNode(formattedDate);
     dateElem.appendChild(dateText);
 
     var articleContainer = DOM.byID("article-container");
@@ -120,6 +117,11 @@ window.onload = function init() {
     articleContainer.appendChild(articleBody);
 
     showArticleContainer();
+  }
+
+  function formatDateForSingleArticle(article) {
+    var date = new Date(article.base.createdAt);
+    return I18n.formatDateVerbose(date);
   }
 
   function mapByURLSlug(articlesJSON) {

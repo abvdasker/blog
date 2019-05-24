@@ -13,3 +13,23 @@ var DOM = {
     return removed;
   }
 };
+
+var I18n = {
+  getLang: function() {
+    if (navigator.languages != undefined) 
+      return navigator.languages[0]; 
+    else 
+      return navigator.language;
+  },
+  formatDate: function(date) {
+    return date.toLocaleDateString(I18n.getLang());
+  },
+  formatDateVerbose: function(date) {
+    return date.toLocaleDateString(I18n.getLang(), {
+      weekday: "short",
+      day: "numeric",
+      month: "long",
+      year: "numeric"
+    });
+  }
+};
