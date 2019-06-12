@@ -10,6 +10,7 @@ body {
     display: block;
     height: 100%;
     border-right: 2px solid black;
+    background: black;
 }
 
 .right-content {
@@ -21,6 +22,34 @@ body {
 
 h1 {
     font-weight: normal;
+}
+
+.site-title {
+    font-size: 6em;
+    color: white;
+    background: linear-gradient(-45deg, #23A6D5, #23D5AB, #23A6D5, #E73C7E, #EE7752, #E73C7E, #23A6D5, #23D5AB, #23A6D5);
+    background-size: 20em;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: shine 20s linear infinite;
+}
+
+@keyframes shine {
+    0% {
+        background-position: 0% 50%;
+    }
+    50% {
+        background-position: 100% 50%;
+    }
+    100% {
+        background-position: 0% 50%;
+    }
+}
+
+a {
+    color: #0098d4;
+    text-decoration: none;
 }
 
 .centered {
